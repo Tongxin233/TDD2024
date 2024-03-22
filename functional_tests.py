@@ -1,6 +1,35 @@
 from selenium import webdriver
+import unittest
 
-browser = webdriver.Chrome()
-browser.get('http://localhost:8000')
+class NewVisitorTest(unittest.TestCase):
+    def setUp(self):
+        self.browser = webdriver.Chrome()
+    
+    def tearDown(self):#把测试环境清理掉
+        self.browser.quit()
 
-assert 'Django' in browser.page_source
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        # 李四听说有个在线待办事项应用
+        # 他去看了这个应用的首页
+        self.browser.get('http://localhost:8000')
+
+        # 他注意到网页的标题和头部都包含'To-Do'这个词
+        self.assertIn('To-Do', self.browser.title)#,"browser title was:"+self.browser.title
+        self.fail('Finish the test!')
+        # 应用邀请他输入一个待办事项
+        # 他在一个文本框中输入了'Buy birds'
+        # 他按了回车键后，页面更新了
+        # 待办事项表格中显示了'1: Buy birds'
+
+        # 页面中又显示了一个文本框，可以输入其他的待办事项
+        # 他输入了'Send birds to zyz'
+
+        # 页面再次更新，他的清单中显示了这两个待办事项
+
+        # 他想知道这个网站是否会记住他的清单
+        # 他看到网站为他生成了一个唯一的URL
+
+        # 他访问这个URL，发现他的待办事项列表还在
+        # 他满意地离开了
+if __name__ == '__main__':
+    unittest.main()#程序入口
