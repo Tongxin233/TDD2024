@@ -35,7 +35,7 @@ class NewVisitorTest(LiveServerTestCase):
         # 他注意到网页的标题和头部都包含'To-Do'这个词
         self.assertIn('To-Do', self.browser.title)#,"browser title was:"+self.browser.title
         header_text = self.browser.find_element(By.TAG_NAME,'h1').text
-        self.assertIn('To-Do', header_text)#,"browser title was:"+self.browser.title
+        self.assertIn('Start a new To-Do', header_text)#,"browser title was:"+self.browser.title
         
         # 应用邀请他输入一个待办事项
         inputbox = self.browser.find_element(By.ID,'id_new_item')
