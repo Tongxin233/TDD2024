@@ -64,3 +64,46 @@ class NewVisitorTest(LiveServerTestCase):
 
         # 他访问这个URL，发现他的待办事项列表还在
         # 他满意地离开了
+
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # 李四新建一个待办事项清单
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID,'id_new_item')
+        inputbox.send_keys('Buy birds')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy birds')
+
+        # 他注意到清单有个唯一的URL
+        li4_list_url = self.browser.current_url
+        self.assertRegex(li4_list_url,'/lists/.+')
+
+        # 现在有一个新用户王五访问了网站
+        # 我们使用一个新的浏览器会话
+        # 确保李四的信息不会从cookie中泄露出来
+        self.browser.quit()
+        self.browser = webdriver.Chrome()
+
+        # 王五访问首页
+        # 页面中看不到李四的清单
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertNotIn('Buy birds',page_text)
+        self.assertNotIn('Send birds to zyz',page_text)
+
+        # 王五输入一个新的待办事项，新建一个清单
+        inputbox = self.browser.find_element(By.ID,'id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy milk')
+
+        # 王五获得了他的唯一URL
+        wang5_list_url = self.browser.current_url
+        self.assertRegex(wang5_list_url,'/lists/.+')
+        self.assertNotEqual(wang5_list_url,li4_list_url)
+
+        # 这个页面还是没有李四的清单
+        page_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertNotIn('Buy birds',page_text)
+        self.assertIn('Buy milk',page_text)
+
+        # 两人都很满意，然后离开了
